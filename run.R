@@ -2,14 +2,14 @@ source("config.R")
 
 ### 1. Download ####
 # Use the function to download SDGs data
-# do_get_sdg_api()
+do_get_sdg_api()
 
 ### 2. Data cleaning ####
 # Function to clean the data downloaded
 indat <- do_clean()
 
 ### 3. Tabulating ####
-tab_aus <- do_tab_Australia()
+tab <- do_tab_country(indat, country = "Indonesia")
 
 ### 4. Visualise ####
 # Generate and interactive plot with the data cleaned
