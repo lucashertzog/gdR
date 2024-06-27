@@ -1,27 +1,34 @@
 do_map <- function()
 {
-
-
+# United Nations Convention on the Law of the Sea (UNCLOS)
+  
+  # Indicator 14.c.1: Number of countries making progress in ratifying, 
+  # accepting and implementing through legal, policy and institutional frameworks, 
+  # ocean-related instruments that implement international law, as reflected in 
+  # the United Nations Convention on the Law of the Sea, for the conservation and 
+  # sustainable use of the oceans and their resources
+  
 foo <- indat[SeriesCode == "ER_UNCLOS_RATACC" | SeriesCode == "ER_UNCLOS_IMPLE"]
 
 foo1 <- foo[SeriesCode == "ER_UNCLOS_RATACC", .SD[which.max(as.numeric(TimePeriod))], by = GeoAreaName]
 
 foo2<- foo[SeriesCode == "ER_UNCLOS_IMPLE", .SD[which.max(as.numeric(TimePeriod))], by = GeoAreaName] 
 
-world <- ne_countries(scale = "medium", returnclass = "sf")
+# Get country polygons
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 
 setnames(foo1, "GeoAreaName", "name")
 setnames(foo2, "GeoAreaName", "name")
 
-# foo2_names <- unique(foo2$name)
-# foo1_names <- unique(foo1$name)
-# world_names <- unique(world$name)
-# names_diff_foo2_world <- setdiff(foo2_names, world_names)
-# names_diff_foo1_world <- setdiff(foo1_names, world_names)
-# 
-# print("Names in foo2 not in world:")
-# print(names_diff_foo2_world)
-# print(names_diff_foo1_world)
+foo2_names <- unique(foo2$name)
+foo1_names <- unique(foo1$name)
+world_names <- unique(world$name)
+names_diff_foo2_world <- setdiff(foo2_names, world_names)
+names_diff_foo1_world <- setdiff(foo1_names, world_names)
+ 
+print("Names in foo2 not in world:")
+print(names_diff_foo2_world)
+print(names_diff_foo1_world)
 
 foo2[name == "Republic of Korea", name := "South Korea"]
 foo2[name == "United Kingdom of Great Britain and Northern Ireland", name := "United Kingdom"]
@@ -66,6 +73,6 @@ p <- ggplot(data = foo3_map) +
     legend.position = "top"
   )
 
-ggsave("figures_and_tables/fig2.png", plot = p, width = 10, height = 6, dpi = 300, units = "in")
+ggsave("figures_and_tables/fig_map.png", plot = p, width = 10, height = 6, dpi = 300, units = "in")
 
 }

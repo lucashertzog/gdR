@@ -1,30 +1,58 @@
-# Australia + world (mean)    
-# plot time series
-# [5] "Sustainable fisheries as a proportion of GDP"  
-
-
 do_plot <- function(){
 
- 
-  ggplot(sdg1471, aes(x = TimePeriod, y = Value, group = GeoAreaName, color = GeoAreaName)) +
-    geom_line(size=1) +  
-    labs(title = "Sustainable fisheries as a proportion of GDP",
+  # Subset the data to only include rows where the Indicator is "14.7.1"
+  sdg1471 <- indat[Indicator=="14.7.1"]
+  
+  # Order the subsetted data by GeoAreaName in ascending order
+  sdg1471 <- sdg1471[order(sdg1471$GeoAreaName, decreasing = FALSE)]
+  
+  # Display the unique GeoAreaNames in the subsetted and ordered data
+  unique(sdg1471$GeoAreaName)
+  
+  # Further subset the data to only include rows where the GeoAreaName is "Indonesia"
+  sdg1471_ind <- sdg1471[GeoAreaName=="Indonesia"]
+  
+  # Let's make a simple plot using base R
+  plot(
+    sdg1471_ind$TimePeriod,
+    sdg1471_ind$Value
+  )
+  
+  # Some improvements: 
+  # type = "l"
+  # col = "blue"
+  # lwd = 2
+  # main = "Sustainable Fisheries as a proportion of GDP in Indonesia"
+  # xlab = "Year"
+  # ylab = "(%)"
+  
+  # Comparing Indonesia with other countries, subsetting first
+  sdg1471_comp <- sdg1471[GeoAreaName %in% c("Indonesia", "Malaysia", "Cook Islands")]
+
+  # Create the plot using ggplot2
+  ggplot(sdg1471_comp, 
+         aes(x = TimePeriod, y = Value, color = GeoAreaName, group = GeoAreaName)) +
+    geom_line(size = 1.2) +
+    labs(title = "Sustainable Fisheries as a proportion of GDP",
          x = "Year",
          y = "(%)",
          color = "Country") +
-    theme(
-      panel.background = element_rect(fill = "white"),
-      panel.grid.major.y = element_line(color = "#A8BAC4", size = 0.3),
-      axis.ticks.length = unit(0, "mm"),
-      axis.title = element_blank(),
-      axis.line.x = element_line(color = "#202020"),
-      axis.text.x = element_text(family = "Econ Sans Cnd", size = 14),
-      axis.text.y = element_text(family = "Econ Sans Cnd", size = 14, vjust = -0.5),
-      legend.position = "right",
-      legend.direction = "vertical",
-      legend.title = element_blank(),
-      legend.text = element_text(family = "Econ Sans Cnd"),
-      plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")
-    )
-return(plot)
+    theme_minimal()
+  
+  # Include world averages for comparison
+  sdg1471_comp_two <- sdg1471[GeoAreaName %in% c("Indonesia", "Malaysia", "Cook Islands", "World")]
+  
+  # Create the plot using ggplot2
+ p <-  ggplot(sdg1471_comp_two, 
+         aes(x = TimePeriod, y = Value, color = GeoAreaName, group = GeoAreaName)) +
+    geom_line(size = 1.2) +
+    labs(title = "Sustainable Fisheries as a proportion of GDP (including World average)",
+         x = "Year",
+         y = "(%)",
+         color = "Country") +
+    theme_minimal()
+ 
+ ggsave("figures_and_tables/fig_plot.png", plot = p, width = 10, height = 6, dpi = 300, units = "in")
+  
+return(p)
 }
